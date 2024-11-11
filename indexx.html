@@ -1,63 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLB Viewer</title>
-    <style>
-        body { margin: 0; }
-        canvas { display: block; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Three.js Scene with Import</title>
+  <!-- استفاده از CDN برای بارگذاری Three.js به عنوان ماژول -->
+  <script type="module">
+    import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
+
+    // ایجاد صحنه، دوربین و رندرر
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // بارگذاری فایل JSON
+    const loader = new THREE.ObjectLoader(); // این برای بارگذاری فایل JSON است
+    loader.load('https://m0hammad0.github.io/studio2/project11.json', (object) => {
+      scene.add(object); // صحنه بارگذاری‌شده به صحنه فعلی اضافه می‌شود
+    });
+
+    // تنظیم موقعیت دوربین
+    camera.position.z = 5;
+
+    // حلقه رندر
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // به‌روزرسانی صحنه یا انیمیشن‌ها
+      // برای مثال: object.rotation.x += 0.01;
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // واکنش‌پذیری صفحه
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+  </script>
 </head>
-<body>
-    <script type="module">
-        import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
-        import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/loaders/GLTFLoader.js';
-        // صحنه، دوربین و رندرر را تنظیم می‌کنیم
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        // بارگذاری فایل GLB
-        const loader = new THREE.GLTFLoader();
-        loader.load('https://m0hammad0.github.io/studio2/scene2.glb', (gltf) => {
-            scene.add(gltf.scene);
-
-            // دوربین فایل GLB را پیدا کرده و استفاده می‌کنیم
-            const gltfCamera = gltf.cameras[0];
-            if (gltfCamera) {
-                camera.position.copy(gltfCamera.position);
-                camera.rotation.copy(gltfCamera.rotation);
-            } else {
-                // اگر دوربینی در فایل GLB نبود، دوربین پیش‌فرض ایجاد می‌کنیم
-                camera.position.set(0, 1, 3);
-                camera.lookAt(0, 1, 0);
-            }
-
-            // نورپردازی ساده برای مدل
-            const light = new THREE.AmbientLight(0x404040, 2); // نور محیطی
-            scene.add(light);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(5, 5, 5).normalize();
-            scene.add(directionalLight);
-            
-            animate();
-        });
-
-        // رندر کردن صحنه
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-
-        // تغییر اندازه صفحه نمایش
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
+<body style="margin: 0; overflow: hidden;">
 </body>
 </html>
